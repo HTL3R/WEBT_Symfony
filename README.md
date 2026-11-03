@@ -248,5 +248,4 @@ docker compose exec app composer <command>
 ## Credits
 
 Originally based on [symfony-docker](https://github.com/dunglas/symfony-docker)
-by [Kévin Dunglas](https://dunglas.dev), available under the MIT License. The
-FrankenPHP/Caddy runtime has been replaced with PHP 8.4 + Apache for this course.
+by [Kévin Dunglas](https://dunglas.dev), available under the MIT License. The FrankenPHP/Caddy runtime has been replaced with PHP 8.5 + Apache for this course.

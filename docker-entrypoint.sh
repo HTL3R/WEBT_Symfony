@@ -29,15 +29,15 @@ echo "==> Migrations done."
 # Only runs when LOAD_FIXTURES=1 (set in docker-compose.yaml),
 # so production is never touched by accident.
 if [ "${LOAD_FIXTURES:-0}" = "1" ]; then
-    echo "==> Loading Fixtures..."
-    if [ -d "/var/www/html/src/DataFixtures" ] && [ "$(ls /var/www/html/src/DataFixtures)" ]; then
-        #runuser -u www-data -- php /var/www/html/bin/console doctrine:fixtures:load --append --no-interaction
+    if [ -n "$(ls -A /var/www/html/src/DataFixtures 2>/dev/null)" ]; then
+        echo "==> Loading Fixtures (purge + reload)..."
+        runuser -u www-data -- php /var/www/html/bin/console doctrine:fixtures:load --no-interaction -v
         echo "==> Fixtures done."
     else
-        echo "==> No fixtures directory or files found, skipping."
+        echo "==> No fixtures found in src/DataFixtures, skipping."
     fi
 else
-    echo "==> Skipping Fixtures (LOAD_FIXTURES != 1)."
+    echo "==> Skipping Fixtures (LOAD_FIXTURES='${LOAD_FIXTURES:-}')."
 fi
 
 # apache2ctl does not forward SIGTERM, so Ctrl-C left Docker to kill the

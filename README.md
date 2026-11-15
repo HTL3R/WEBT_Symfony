@@ -21,7 +21,7 @@ A starting point for students who want to build **with the Symfony framework**.
 ├── var/                 # cache, logs and the SQLite database (generated)
 ├── vendor/              # Composer dependencies (ships with the project)
 ├── .env                 # development defaults
-├── Dockerfile           # PHP 8.4 + Apache image
+├── Dockerfile           # PHP 8.5 + Apache image
 ├── docker-compose.yml   # Docker Compose configuration
 ├── docker-entrypoint.sh # restores vendor/, prepares var/, starts Apache
 ├── start.sh             # start/stop containers, run console commands
@@ -194,6 +194,41 @@ APP_ENV=prod ./start.sh
 
 Put anything genuinely secret in `.env.local`, which should never be committed.
 
+### Sample data (fixtures)
+
+Every time the container starts, it first applies pending Doctrine migrations
+and then loads the fixtures from `src/DataFixtures/`. The `LOAD_FIXTURES`
+setting in `.env` decides whether that second step happens:
+
+```dotenv
+# 1 = load fixtures on every start (default), 0 = skip
+LOAD_FIXTURES=1
+```
+
+- **`1`:** on each start, the tables of your entities are **emptied and
+  refilled** with the fixture data. Anything you created through the app in the
+  meantime is gone after a restart, so you always begin from the same known
+  state.
+- **`0`:** fixtures are not touched, and your data survives restarts.
+
+After changing `LOAD_FIXTURES`, stop and start the environment again
+(`./start.sh -s`, then `./start.sh`). A plain restart with `-r` keeps the old
+value, because the setting is read only when the container is created. For a
+single run you can also override it from the shell:
+
+```bash
+LOAD_FIXTURES=0 ./start.sh
+```
+
+Changes to your fixture *classes* take effect on the next start
+(`./start.sh -r` is enough). To reload them right away without restarting:
+
+```bash
+./start.sh -c doctrine:fixtures:load
+```
+
+`docker compose logs app` shows which fixtures were loaded at startup.
+
 ## Dependencies
 
 `vendor/` is **not** in git — `composer.lock` is. Building the image installs the
@@ -213,5 +248,4 @@ docker compose exec app composer <command>
 ## Credits
 
 Originally based on [symfony-docker](https://github.com/dunglas/symfony-docker)
-by [Kévin Dunglas](https://dunglas.dev), available under the MIT License. The
-FrankenPHP/Caddy runtime has been replaced with PHP 8.4 + Apache for this course.
+by [Kévin Dunglas](https://dunglas.dev), available under the MIT License. The FrankenPHP/Caddy runtime has been replaced with PHP 8.5 + Apache for this course.

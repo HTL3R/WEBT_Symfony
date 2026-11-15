@@ -17,6 +17,7 @@ services:
       DATABASE_URL: "${DATABASE_URL:-sqlite:///%kernel.project_dir%/var/data.db}"
       CORS_ALLOW_ORIGIN: "${CORS_ALLOW_ORIGIN:-^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$$}"
       DEFAULT_URI: "${DEFAULT_URI:-http://localhost}"
+      LOAD_FIXTURES: "${LOAD_FIXTURES:-1}"
     volumes:
       # Live editing: changes in src/, templates/ and config/ are served
       # immediately, no rebuild. Only public/ is reachable over HTTP.

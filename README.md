@@ -9,7 +9,9 @@ A starting point for students who want to build **with the Symfony framework**.
 
 ## Requirements
 
-- [Docker](https://docs.docker.com/get-docker/) must be installed.
+- [Docker](https://docs.docker.com/get-docker/) **or** [Podman](https://podman.io/) (with `podman-compose`) must be installed.
+- The scripts use Docker by default. If Podman is installed, Podman is used. Force one with `CONTAINER_ENGINE=docker ./start.sh` or `CONTAINER_ENGINE=podman ./start.sh`.
+- Rootless Podman cannot use ports below 1024, so the app then runs on port **8080** (change it with `HTTP_PORT=...`).
 
 ## Project structure
 
@@ -117,7 +119,7 @@ exam machine**. The image is prepared in advance and only started on the day.
 **On each exam machine, once, with the .tar copied over:**
 
 ```bash
-docker load -i _images/webt-symfony.tar
+docker load -i _images/webt-symfony.tar   # or: podman load -i ...
 ```
 
 **During the exam:**
@@ -146,7 +148,7 @@ Build the image (without starting it):
 ./build.sh
 ```
 
-Clean build (without the Docker cache):
+Clean build (without the build cache):
 
 ```bash
 ./build.sh -c
@@ -167,14 +169,14 @@ Options can be combined:
 Load an exported image on another machine:
 
 ```bash
-docker load -i _images/webt-symfony.tar
+docker load -i _images/webt-symfony.tar   # or: podman load -i ...
 ```
 
 ## Ports
 
 | Service | URL |
 |---------|-----|
-| Symfony app | http://localhost:80 |
+| Symfony app | http://localhost:80 (rootless Podman: http://localhost:8080) |
 
 The port can be changed with the `HTTP_PORT` environment variable:
 
@@ -242,7 +244,7 @@ your working copy has no `vendor/` the container restores it on first start.
 Composer itself is available inside the container:
 
 ```bash
-docker compose exec app composer <command>
+docker compose exec app composer <command>   # or: podman-compose exec app composer <command>
 ```
 
 ## Credits
